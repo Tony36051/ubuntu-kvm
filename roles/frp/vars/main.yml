@@ -1,0 +1,4 @@
+vhost_http_port: 8080
+subdomain_host: example.com
+version: 0.18.0
+frp_home: /root/frp_{{ version }}_linux_amd64

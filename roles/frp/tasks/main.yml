@@ -1,0 +1,28 @@
+---
+- name: unarchive
+  unarchive: 
+    src: https://github.com/fatedier/frp/releases/download/v{{ version }}/frp_{{ version }}_linux_amd64.tar.gz
+    dest: /root 
+- name: add vhost_http_port = {{ vhost_http_port }} in frps.ini
+  lineinfile:
+    dest:  /root/frp_{{ version }}_linux_amd64/frps.ini
+    line: 'vhost_http_port = {{ vhost_http_port }}'
+- name: add subdomain_host = {{ subdomain_host }} in frps.ini
+  lineinfile:
+    dest:  /root/frp_{{ version }}_linux_amd64/frps.ini
+    line: 'subdomain_host = {{ subdomain_host }}'
+- name: config frps.ini with pre-define file
+  blockinfile:
+    block: "{{ lookup('file', 'frps.ini') }}"
+    dest:  /root/frp_{{ version }}_linux_amd64/frps.ini
+- name: auto start
+  lineinfile:
+    dest:  /etc/rc.local
+    line: '{{ frp_home }}/frps -c /root/frp_0.16.0_linux_amd64/frps.ini'
+- name: pkill frps
+  command: pkill -f frps
+  ignore_errors: yes
+- name: start frps
+  command: "nohup frps -c frps.ini 2>&1 &"
+  args: 
+    chdir: "{{ frp_home }}"

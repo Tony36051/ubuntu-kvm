@@ -1,0 +1,43 @@
+---
+- name: Make sure we have a 'wheel' group
+  group:
+      name: wheel
+      state: present
+
+- name: Allow 'wheel' group to have passwordless sudo
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^%wheel'
+    line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+
+- name: Create user "{{ username }}"
+  user:
+    name: "{{ username }}"
+    shell: /bin/bash
+    groups: wheel
+    createhome: yes
+    home: /home/{{ username }}
+    state: present
+    password: "{{ password |password_hash('sha512') }}"
+
+- name: ssh timeout TCPKeepAlive
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    state: present
+    line: 'TCPKeepAlive yes'
+
+- name: ssh timeout ClientAliveInterval
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    state: present
+    line: 'ClientAliveInterval 300'
+
+- name: ssh timeout ClientAliveCountMax
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    state: present
+    line: 'ClientAliveCountMax 3'
+
+- name: install curl
+  apt: name=curl state=latest

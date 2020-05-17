@@ -1,0 +1,5 @@
+---
+# file: frp.yml
+- hosts: localhost
+  roles:
+    - frp

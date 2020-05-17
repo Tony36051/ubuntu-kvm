@@ -1,0 +1,7 @@
+--- 
+- import_playbook: common.yml
+- import_playbook: ss.yml
+- import_playbook: lkl.yml
+#- import_playbook: frp.yml
+- import_playbook: mariadb.yml
+- import_playbook: nextcloud.yml
